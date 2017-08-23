@@ -8,66 +8,38 @@ module.exports = function(grunt) {
 
     // Metadata.
     pkg: grunt.file.readJSON('package.json'),
-    banner: '/*!\n' +
-            ' * Validator v<%= pkg.version %> for Bootstrap 3, by @1000hz\n' +
-            ' * Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
-            ' * Licensed under <%= _.pluck(pkg.licenses, "url").join(", ") %>\n' +
-            ' *\n' +
-            ' * https://github.com/1000hz/bootstrap-validator\n' +
-            ' */\n\n',
 
     // Task configuration.
     jshint: {
       options: {
-        jshintrc: 'js/.jshintrc'
+        jshintrc: '.jshintrc'
       },
       gruntfile: {
         src: 'Gruntfile.js'
       },
       src: {
-        src: ['js/*.js']
+        src: ['validator.js']
       },
       test: {
-        src: ['js/tests/unit/*.js']
-      }
-    },
-
-    concat: {
-      options: {
-        banner: '<%= banner %>',
-        stripBanners: true
-      },
-      dist: {
-        src: ['js/validator.js'],
-        dest: 'dist/validator.js'
-      }
-    },
-
-    copy: {
-      docs: {
-        expand: true,
-        cwd: './dist',
-        src: '*',
-        dest: 'docs/dist'
+        src: ['tests/unit/*.js']
       }
     },
 
     uglify: {
       options: {
-        banner: '<%= banner %>',
         report: 'min'
       },
       min: {
-        src: ['js/validator.js'],
-        dest: 'dist/validator.min.js'
+        src: ['validator.js'],
+        dest: 'validator.min.js'
       }
     },
 
     qunit: {
       options: {
-        inject: 'js/tests/unit/phantom.js'
+        inject: 'tests/unit/phantom.js'
       },
-      files: ['js/tests/*.html']
+      files: ['tests/*.html']
     },
 
     watch: {
@@ -81,10 +53,6 @@ module.exports = function(grunt) {
       }
     },
 
-    jekyll: {
-      docs: {}
-    },
-
     validation: {
       options: {
         reset: true,
@@ -94,7 +62,7 @@ module.exports = function(grunt) {
         ]
       },
       files: {
-        src: ["_gh_pages/**/*.html"]
+        src: ["docs/*.html"]
       }
     }
   });
@@ -107,18 +75,17 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-jekyll');
   grunt.loadNpmTasks('grunt-html-validation');
   grunt.loadNpmTasks('grunt-sed');
 
   // Docs HTML validation task
-  grunt.registerTask('validate-html', ['jekyll', 'validation']);
+  grunt.registerTask('validate-html', ['validation']);
 
   // Test task.
   grunt.registerTask('test', ['jshint', 'qunit']);
 
   // Docs distribution task.
-  grunt.registerTask('dist-docs', 'copy:docs');
+  grunt.registerTask('dist-docs');
 
   // Distribution task.
   grunt.registerTask('dist', ['concat', 'uglify', 'dist-docs']);
